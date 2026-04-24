@@ -19,9 +19,10 @@ const ENTRIES_COLLECTION = 'journalEntries';
  * @param {string} title - The title of the entry
  * @param {string} content - The content of the entry
  * @param {string} mood - The mood/emotion associated with the entry (optional)
+ * @param {Array<string>} tags - Optional tags associated with the entry
  * @returns {Promise<string>} - The ID of the created document
  */
-export const addJournalEntry = async (title, content, mood = '') => {
+export const addJournalEntry = async (title, content, mood = '', tags = []) => {
   if (!auth.currentUser) {
     throw new Error('User must be logged in to add entries');
   }
@@ -33,6 +34,7 @@ export const addJournalEntry = async (title, content, mood = '') => {
       title: title.trim(),
       content: content.trim(),
       mood: mood.trim(),
+      tags: Array.isArray(tags) ? tags.map((tag) => tag.trim()).filter(Boolean) : [],
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     });
@@ -55,11 +57,7 @@ export const getUserJournalEntries = async () => {
 
   try {
     console.log('Fetching entries for user:', auth.currentUser.uid);
-    const q = query(
-      collection(db, ENTRIES_COLLECTION),
-      where('userID', '==', auth.currentUser.uid),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(collection(db, ENTRIES_COLLECTION), where('userID', '==', auth.currentUser.uid));
 
     const querySnapshot = await getDocs(q);
     console.log('Query returned', querySnapshot.size, 'documents');
@@ -70,11 +68,13 @@ export const getUserJournalEntries = async () => {
       entries.push({
         id: doc.id,
         ...doc.data(),
+        tags: Array.isArray(doc.data().tags) ? doc.data().tags : [],
         createdAt: doc.data().createdAt?.toDate(),
         updatedAt: doc.data().updatedAt?.toDate(),
       });
     });
 
+    entries.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
     return entries;
   } catch (error) {
     console.error('Error fetching journal entries:', error);

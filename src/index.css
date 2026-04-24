@@ -2,6 +2,8 @@
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
+  --surface: #f8f9ff;
+  --surface-alt: #e7e7f1;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -14,8 +16,11 @@
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+  --base-font-size: 18px;
+  --content-gap: 1.5rem;
+  --card-padding: 1.5rem;
 
-  font: 18px/145% var(--sans);
+  font: var(--base-font-size)/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
@@ -35,11 +40,8 @@
     --text: #9ca3af;
     --text-h: #f3f4f6;
     --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
+    --surface: #1f2028;
+    --surface-alt: #262732;
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
@@ -52,6 +54,9 @@
 
 body {
   margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 #root {
@@ -64,6 +69,79 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+.card,
+.modal-content,
+.dropdown-menu,
+.alert,
+.form-control,
+.form-select,
+.form-check-input,
+.form-check-label,
+.list-group-item,
+.btn {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.card,
+.modal-content,
+.dropdown-menu {
+  box-shadow: var(--shadow);
+}
+
+.form-range {
+  background: var(--surface-alt) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.form-range::-webkit-slider-thumb {
+  background: var(--accent) !important;
+}
+
+.form-range::-moz-range-thumb {
+  background: var(--accent) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--accent) !important;
+  border-color: var(--accent-border) !important;
+}
+
+.btn-outline-secondary,
+.btn-secondary {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.btn-link,
+.nav-link,
+.navbar-brand,
+.user-email {
+  color: var(--text-h) !important;
+}
+
+.settings-header,
+.stats-header,
+.manage-tags-header,
+.entries-header,
+.preview-card,
+.tag-card,
+.theme-card,
+.auth-card,
+.card-header,
+.modal-header {
+  background: var(--surface-alt) !important;
+  color: var(--text-h) !important;
+}
+
+.text-muted {
+  color: var(--text) !important;
+  opacity: 0.75 !important;
 }
 
 h1,

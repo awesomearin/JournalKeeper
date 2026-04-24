@@ -4,11 +4,16 @@
   gap: 15px;
 }
 
+.theme-card,
+.recent-entry-item {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
 .recent-entry-item {
   padding: 15px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
   transition: box-shadow 0.2s ease;
 }
 
@@ -24,7 +29,7 @@
 .entry-title {
   font-weight: 600;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-h);
   margin-bottom: 4px;
 }
 

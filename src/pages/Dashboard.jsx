@@ -155,7 +155,7 @@ const Dashboard = () => {
               <Card.Text>
                 Organize your entries with tags and categories for better organization.
               </Card.Text>
-              <Button variant="success" className="w-100">
+              <Button variant="success" className="w-100" onClick={() => navigate('/tags')}>
                 Manage Tags
               </Button>
             </Card.Body>
@@ -169,7 +169,7 @@ const Dashboard = () => {
               <Card.Text>
                 Find specific entries quickly with powerful search functionality.
               </Card.Text>
-              <Button variant="warning" className="w-100">
+              <Button variant="warning" className="w-100" onClick={() => navigate('/entries')}>
                 Search Entries
               </Button>
             </Card.Body>
@@ -183,8 +183,8 @@ const Dashboard = () => {
               <Card.Text>
                 Customize your journaling experience and account preferences.
               </Card.Text>
-              <Button variant="dark" className="w-100">
-                Account Settings
+              <Button variant="primary" className="w-100" onClick={() => navigate('/settings')}>
+                Open Settings
               </Button>
             </Card.Body>
           </Card>
@@ -193,7 +193,7 @@ const Dashboard = () => {
 
       <Row className="mt-5">
         <Col>
-          <Card className="bg-light">
+          <Card className="theme-card">
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="mb-0">Recent Activity</h5>

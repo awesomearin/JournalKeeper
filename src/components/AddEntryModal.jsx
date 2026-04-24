@@ -1,15 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { addJournalEntry } from '../services/journalService';
+import { getUserTags } from '../services/tagService';
 import '../styles/AddEntryModal.css';
 
 const AddEntryModal = ({ show, onHide, onEntryAdded, navigate }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mood, setMood] = useState('neutral');
+  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    if (!show) return;
+
+    const loadTags = async () => {
+      try {
+        const tags = await getUserTags();
+        setAvailableTags(tags.map((tag) => tag.name));
+      } catch (err) {
+        console.error('Error loading tags for entry creation:', err);
+      }
+    };
+
+    loadTags();
+  }, [show]);
+
+  const handleTagsChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map((option) => option.value);
+    setSelectedTags(selected);
+  };
 
   const moods = [
     { value: 'happy', emoji: '😊', label: 'Happy' },
@@ -41,13 +64,14 @@ const AddEntryModal = ({ show, onHide, onEntryAdded, navigate }) => {
     setLoading(true);
 
     try {
-      const entryId = await addJournalEntry(title, content, mood);
+      const entryId = await addJournalEntry(title, content, mood, selectedTags);
       setSuccess('Entry added successfully!');
 
       // Reset form
       setTitle('');
       setContent('');
       setMood('neutral');
+      setSelectedTags([]);
 
       // Call callback to refresh entries list
       if (onEntryAdded) {
@@ -73,6 +97,7 @@ const AddEntryModal = ({ show, onHide, onEntryAdded, navigate }) => {
     setTitle('');
     setContent('');
     setMood('neutral');
+    setSelectedTags([]);
     setError('');
     setSuccess('');
     onHide();
@@ -113,6 +138,32 @@ const AddEntryModal = ({ show, onHide, onEntryAdded, navigate }) => {
               disabled={loading}
               className="entry-textarea"
             />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Assign Tags</Form.Label>
+            {availableTags.length > 0 ? (
+              <Form.Select
+                multiple
+                value={selectedTags}
+                onChange={handleTagsChange}
+                disabled={loading}
+                size={Math.min(6, availableTags.length)}
+              >
+                {availableTags.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </Form.Select>
+            ) : (
+              <Form.Text className="text-muted">
+                Create tags on the dashboard under Manage Tags, then assign them here.
+              </Form.Text>
+            )}
+            <Form.Text className="text-muted d-block mt-2">
+              Hold Ctrl (Windows) or Cmd (Mac) to select multiple tags.
+            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">

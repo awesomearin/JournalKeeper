@@ -8,13 +8,13 @@
 
 .stats-header h1 {
   margin: 0;
-  color: #fff;
-    font-size: 2rem;
+  color: var(--text-h);
+  font-size: 2rem;
 }
 
 .stats-card {
   border: none;
-  border-left: 4px solid #0d6efd;
+  border-left: 4px solid var(--accent);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 

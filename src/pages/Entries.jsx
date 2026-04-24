@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Alert, Spinner, Form, InputGroup } from 'react-bootstrap';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { getUserJournalEntries, deleteJournalEntry } from '../services/journalService';
@@ -9,6 +9,7 @@ import '../styles/Entries.css';
 const Entries = () => {
   const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
@@ -84,6 +85,19 @@ const Entries = () => {
     return moodEmojis[mood] || '📝';
   };
 
+  const normalize = (text) => text?.toString().toLowerCase() || '';
+
+  const filteredEntries = entries.filter((entry) => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return true;
+
+    const dateText = formatDate(entry.createdAt);
+    const tagsText = Array.isArray(entry.tags) ? entry.tags.join(' ') : '';
+    return [entry.title, entry.content, dateText, tagsText]
+      .map(normalize)
+      .some((value) => value.includes(query));
+  });
+
   if (loading) {
     return (
       <Container className="mt-5">
@@ -119,6 +133,28 @@ const Entries = () => {
 
       {error && <Alert variant="danger">{error}</Alert>}
 
+      {entries.length > 0 && (
+        <Row className="mb-3">
+          <Col>
+            <InputGroup>
+              <Form.Control
+                type="search"
+                placeholder="Search by title, content, date, or tag..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button
+                variant="outline-secondary"
+                onClick={() => setSearchTerm('')}
+                disabled={!searchTerm}
+              >
+                Clear
+              </Button>
+            </InputGroup>
+          </Col>
+        </Row>
+      )}
+
       {entries.length === 0 ? (
         <Row>
           <Col>
@@ -139,9 +175,22 @@ const Entries = () => {
             </Card>
           </Col>
         </Row>
+      ) : filteredEntries.length === 0 ? (
+        <Row>
+          <Col>
+            <Card className="text-center p-5">
+              <Card.Body>
+                <h5 className="mb-3">No entries match your search</h5>
+                <p className="text-muted mb-0">
+                  Try a different keyword, title, or date format to find your entry.
+                </p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       ) : (
         <div className="entries-list">
-          {entries.map((entry) => (
+          {filteredEntries.map((entry) => (
             <Card key={entry.id} className="entry-card mb-3 shadow-sm">
               <Card.Body>
                 <div className="entry-header">
@@ -149,9 +198,18 @@ const Entries = () => {
                     <Card.Title className="entry-title">
                       {getMoodEmoji(entry.mood)} {entry.title}
                     </Card.Title>
-                    <Card.Subtitle className="text-muted entry-date">
-                      {formatDate(entry.createdAt)}
-                    </Card.Subtitle>
+                    <div className="entry-meta-row">
+                      <Card.Subtitle className="text-muted entry-date">
+                        {formatDate(entry.createdAt)}
+                      </Card.Subtitle>
+                      {Array.isArray(entry.tags) && entry.tags.length > 0 && (
+                        <div className="entry-tags">
+                          {entry.tags.map((tag) => (
+                            <span key={tag} className="entry-tag">#{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="entry-mood">
                     <span className="mood-badge">{getMoodEmoji(entry.mood)}</span>

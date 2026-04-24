@@ -29,7 +29,7 @@ const NavigationBar = () => {
   };
 
   return (
-    <Navbar bg="dark" expand="lg" className="navbar-custom sticky-top">
+    <Navbar expand="lg" className="navbar-custom sticky-top">
       <Container>
         <Navbar.Brand href="#/" className="brand-text">
           <span className="brand-icon">📔</span> JournalKeeper
@@ -54,6 +54,9 @@ const NavigationBar = () => {
                 </Nav.Link>
                 <Nav.Link href="#/entries" className="nav-link-logged">
                   Entries
+                </Nav.Link>
+                <Nav.Link href="#/settings" className="nav-link-logged">
+                  Settings
                 </Nav.Link>
                 <div className="nav-user-section">
                   <span className="user-email">{user.email}</span>

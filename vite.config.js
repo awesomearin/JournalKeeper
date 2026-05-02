@@ -7,5 +7,6 @@ export default defineConfig({
   base: '/JournalKeeper/',
   build: {
     outDir: "docs",
+    sourcemap: false,
   },
 })
